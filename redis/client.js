@@ -1,9 +1,9 @@
-const { redisClient } = require('redis.js');
-const { config } = require('./config/config.js');
+const { createClient } = require('redis');
+const config = require('../config/config.js');
 const emoteGroupName = 'emote';
 
 
-const redis = new redisClient({url: config.redisUrl});
+const redis = createClient({url: config.redisUrl});
 
 /*
  * redisStart
@@ -52,7 +52,13 @@ async function redisEmoteRemove(name) {
  * return a array of {key, value} that key match the prefix
  */
 async function redisEmotePrefixSearch(prefix, limit = 25) {
-	const matched = await redis.zRangeByLex(emoteGroupName, `[${prefix}`, `[${prefix}\uffff`, 0, limit);
+	const matched = await redis.zRange(emoteGroupName, `[${prefix}`, `[${prefix}\uffff`, {
+		BY: 'LEX',
+		LIMIT: {
+			offset: 0,
+			count: limit
+		}
+	});
 	return matched;
 }
 
@@ -80,9 +86,11 @@ async function redisEmoteNameCheck(name) {
 	return false;
 }
 
-module.exports {
+module.exports = {
+	redisStart,
 	redisEmoteAdd,
 	redisEmoteRemove,
 	redisEmotePrefixSearch,
 	redisEmoteNameCheck,
+	redisEmoteGet
 }

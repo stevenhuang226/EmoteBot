@@ -1,18 +1,17 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { redis } = require('./redis/client.js');
+const redis = require('../redis/client.js');
 
 const data = new SlashCommandBuilder()
 	.setName('emote')
 	.setDescription('send a emote')
-	.addStringOption(opt => {
+	.addStringOption(opt => 
 		opt.setName('name')
 			.setDescription('emote name')
 			.setRequired(true)
 			.setAutocomplete(true)
-	});
+	);
 
 async function autocomplete(interaction) {
-	if (interaction.type !== InteractionType.ApplicationCommandAutocomplete) return;
 	const focusedOption = interaction.options.getFocused(true);
 
 	if (focusedOption.name !== 'name') return;
@@ -29,7 +28,7 @@ async function autocomplete(interaction) {
 
 async function execute(interaction) {
 	const name = interaction.options.getString('name');
-	const filePath = redisEmoteGet(name);
+	const filePath = redis.redisEmoteGet(name);
 	if (filePath === 'Error') {
 		await interaction.reply({
 			content: `${name} not found`,
@@ -40,7 +39,7 @@ async function execute(interaction) {
 	if (! filePath.startWith('http') && ! fs.existsSync(filePath)) {
 		await interaction.replay({
 			content: `path: ${filePath} file lose`,
-			ephemeral: true;
+			ephemeral: true,
 		})
 		return;
 	}
