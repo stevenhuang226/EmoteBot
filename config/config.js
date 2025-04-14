@@ -1,4 +1,4 @@
 module.exports = {
-	emoteStorePath: "./emotes"
-	redisUrl: ""
+	emoteStorePath: "./emotes",
+	redisUrl: "localhost:6379"
 }

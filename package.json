@@ -1,4 +1,8 @@
 {
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node src/test.js"
+  },
   "dependencies": {
     "discord.js": "^14.18.0",
     "redis": "^4.7.0"
