@@ -28,14 +28,15 @@ async function autocomplete(interaction) {
 
 async function execute(interaction) {
 	const name = interaction.options.getString('name');
-	const filePath = redis.redisEmoteGet(name);
-	if (filePath === 'Error') {
+	const emotePath = redis.redisEmoteGet(name);
+	if (emotePath === 'Error') {
 		await interaction.reply({
 			content: `${name} not found`,
 			ephemeral: true,
 		});
 		return;
 	}
+	/*
 	if (! filePath.startWith('http') && ! fs.existsSync(filePath)) {
 		await interaction.replay({
 			content: `path: ${filePath} file lose`,
@@ -43,8 +44,9 @@ async function execute(interaction) {
 		})
 		return;
 	}
+	*/
 	await interaction.reply({
-		files: [filePath]
+		files: [emotePath]
 	});
 }
 

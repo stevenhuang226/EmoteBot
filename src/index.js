@@ -3,7 +3,6 @@ const { TOKEN } = require('./config/TOKEN.js');
 const fs = require('fs');
 const args = process.argv.slice(2);
 
-
 const client = new Client({
 	intents: [
 		GatewayIntentBits.Guilds,
@@ -13,7 +12,7 @@ const client = new Client({
 
 // add command files in ./commands
 client.commands = new Collection();
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const commandFiles = fs.readdirSync('./src/commands').filter(file => file.endsWith('.js'));
 let commands = [];
 for (const file of commandFiles) {
 	const command = require(`./commands/${file}`);

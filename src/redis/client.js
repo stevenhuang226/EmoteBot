@@ -1,5 +1,5 @@
 const { createClient } = require('redis');
-const config = require('../config/config.js');
+const config = require(`../config/config.js`);
 const emoteGroupName = 'emote';
 
 
@@ -23,7 +23,7 @@ async function redisStart() {
  */
 async function redisEmoteAdd(name, path) {
 	if (redisEmoteNameCheck(name)) {
-		console.log(`./redis/client.js: redisEmoteRemove\n${name} had exists, cannot add !!!`);
+		console.log(`redis/client.js: redisEmoteRemove\n${name} had exists, cannot add !!!`);
 	}
 	await redis.set(`${emoteGroupName}:${name}`, path);
 	await redis.zAdd(emoteGroupName, {score: 0, value: name});
@@ -37,7 +37,7 @@ async function redisEmoteAdd(name, path) {
  */
 async function redisEmoteRemove(name) {
 	if (! redisEmoteNameCheck(name)) {
-		console.log(`./redis/client.js: redisEmoteRemove\n${name} not exists, cannot remove !!!`);
+		console.log(`redis/client.js: redisEmoteRemove\n${name} not exists, cannot remove !!!`);
 		return;
 	}
 	await redis.del(`${emoteGroupName}:${name}`);
