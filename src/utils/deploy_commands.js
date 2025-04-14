@@ -1,4 +1,4 @@
-const { TOKEN } = require('../config/TOKEN.js');
+const { TOKEN } = require('../../config/TOKEN.js');
 const { REST, Routes } = require('discord.js');
 
 

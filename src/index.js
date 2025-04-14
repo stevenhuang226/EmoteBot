@@ -1,5 +1,5 @@
 const { Client, Collection, Events, GatewayIntentBits, REST, Routes, SlashCommandBuilder } = require('discord.js');
-const { TOKEN } = require('./config/TOKEN.js');
+const { TOKEN } = require('../config/TOKEN.js');
 const fs = require('fs');
 const args = process.argv.slice(2);
 
