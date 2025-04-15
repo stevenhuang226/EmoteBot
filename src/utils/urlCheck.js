@@ -1,3 +1,5 @@
+const { request } = require('undici');
+
 async function urlImageCheckExists(url) {
 	imageStatus = [false, false];
 	const { statusCode, headers } = await request(url, { method: 'HEAD' });

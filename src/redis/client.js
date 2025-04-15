@@ -13,6 +13,12 @@ const redis = createClient({url: config.redisUrl});
 async function redisStart() {
 	await redis.connect();
 }
+/* 
+ * redisClose
+ */
+async function redisClose() {
+	await redis.disconnect();
+}
 
 /*
  * redisEmoteAdd
@@ -22,11 +28,13 @@ async function redisStart() {
  * no return
  */
 async function redisEmoteAdd(name, path) {
-	if (redisEmoteNameCheck(name)) {
+	if (await redisEmoteNameCheck(name)) {
 		console.log(`redis/client.js: redisEmoteRemove\n${name} had exists, cannot add !!!`);
+		return -1;
 	}
 	await redis.set(`${emoteGroupName}:${name}`, path);
 	await redis.zAdd(emoteGroupName, {score: 0, value: name});
+	return 0;
 }
 
 /*
@@ -36,12 +44,13 @@ async function redisEmoteAdd(name, path) {
  * no return, but will log error
  */
 async function redisEmoteRemove(name) {
-	if (! redisEmoteNameCheck(name)) {
+	if (! await redisEmoteNameCheck(name)) {
 		console.log(`redis/client.js: redisEmoteRemove\n${name} not exists, cannot remove !!!`);
-		return;
+		return -1;
 	}
 	await redis.del(`${emoteGroupName}:${name}`);
 	await redis.zRem(emoteGroupName, name);
+	return 0;
 }
 
 /*
@@ -49,7 +58,8 @@ async function redisEmoteRemove(name) {
  * variable: prefix(string): prefix to search
  * 	limit(int): limit for maximum return size
  *
- * return a array of {key, value} that key match the prefix
+ * return a array of {key, value} that key match the prefix,
+ * if there is not data or error, return a zero array
  */
 async function redisEmotePrefixSearch(prefix, limit = 25) {
 	const matched = await redis.zRange(emoteGroupName, `[${prefix}`, `[${prefix}\uffff`, {
@@ -59,7 +69,7 @@ async function redisEmotePrefixSearch(prefix, limit = 25) {
 			count: limit
 		}
 	});
-	return matched;
+	return matched || [];
 }
 
 /*
@@ -70,8 +80,10 @@ async function redisEmotePrefixSearch(prefix, limit = 25) {
  * return a object include key and value
  */
 async function redisEmoteGet(name) {
-	if (! redisEmoteNameCheck(name)) return 'Error';
-	return redis.get(name);
+	if (! redisEmoteNameCheck(name)) {
+		return 'Error'
+	}
+	return await redis.get(`${emoteGroupName}:${name}`);
 }
 
 /* 
@@ -81,13 +93,14 @@ async function redisEmoteGet(name) {
  * if exists => true; else => false
  */
 async function redisEmoteNameCheck(name) {
-	const exists = redis.exists(`${emoteGroupName}:${name}`);
+	const exists = await redis.exists(`${emoteGroupName}:${name}`);
 	if (exists) return true;
 	return false;
 }
 
 module.exports = {
 	redisStart,
+	redisClose,
 	redisEmoteAdd,
 	redisEmoteRemove,
 	redisEmotePrefixSearch,

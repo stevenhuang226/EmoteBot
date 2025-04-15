@@ -1,6 +1,7 @@
 const { Client, Collection, Events, GatewayIntentBits, REST, Routes, SlashCommandBuilder } = require('discord.js');
 const { TOKEN } = require('../config/TOKEN.js');
 const fs = require('fs');
+const redis = require('./redis/client.js');
 const args = process.argv.slice(2);
 
 const client = new Client({
@@ -40,6 +41,7 @@ client.on(Events.InteractionCreate, async interaction => {
 async function interactionChatInputCommand(interaction) {
 	const command = client.commands.get(interaction.commandName);
 	if (! command) return;
+	await interaction.deferReply();
 	try {
 		await command.execute(interaction);
 	} catch (err) {
@@ -47,7 +49,7 @@ async function interactionChatInputCommand(interaction) {
 		if (interaction.replied || interaction.deferred) {
 			await interaction.followUp({content: `Error ${err}`, ephemeral: true});
 		} else {
-			await interaction.reply({content: `Error ${err}`, ephemeral: true});
+			await interaction.editReply({content: `Error ${err}`, ephemeral: true});
 		}
 	}
 }
@@ -64,6 +66,7 @@ async function interactionAutocomplete(interaction) {
 
 client.once(Events.ClientReady, () => {
 	console.log(`Logged in as ${client.user.tag}`);
+	redis.redisStart();
 });
 
 client.login(TOKEN);

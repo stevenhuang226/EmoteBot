@@ -2,9 +2,9 @@ const { SlashCommandBuilder } = require('discord.js');
 const redis = require('../redis/client.js');
 
 const data = new SlashCommandBuilder()
-	.setName('emote')
-	.setDescription('send a emote')
-	.addStringOption(opt => 
+	.setName('emote_rm')
+	.setDescription('remove emote by name')
+	.addStringOption(opt =>
 		opt.setName('name')
 		.setDescription('emote name')
 		.setRequired(true)
@@ -26,28 +26,24 @@ async function autocomplete(interaction) {
 	await interaction.respond(options);
 }
 
+
 async function execute(interaction) {
 	const name = interaction.options.getString('name');
-	const emotePath = await redis.redisEmoteGet(name);
-	if (emotePath === 'Error' || emotePath === null || emotePath === undefined) {
+
+	const rmResult = await redis.redisEmoteRemove(name);
+
+	if (rmResult === 0) {
 		await interaction.editReply({
-			content: `${name} not found`,
+			content: `remove ${name} success`,
 			ephemeral: true,
 		});
 		return;
 	}
-	/*
-	if (! filePath.startWith('http') && ! fs.existsSync(filePath)) {
-		await interaction.replay({
-			content: `path: ${filePath} file lose`,
-			ephemeral: true,
-		})
-		return;
-	}
-	*/
 	await interaction.editReply({
-		content: emotePath,
+		content: `cannot remove ${name}`,
+		ephemeral: true,
 	});
+	return;
 }
 
 module.exports = {
