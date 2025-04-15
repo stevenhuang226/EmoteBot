@@ -1,6 +1,7 @@
 {
   "scripts": {
     "start": "node src/index.js",
+    "deployCommand": "node src/index.js --deploy-commands",
     "test": "node src/test.js"
   },
   "dependencies": {
