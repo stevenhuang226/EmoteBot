@@ -1,5 +1,4 @@
 const { SlashCommandBuilder } = require('discord.js');
-//const urlChecker = require('../utils/urlCheck.js');
 const redis = require('../redis/client.js');
 
 const data = new SlashCommandBuilder()
@@ -17,10 +16,6 @@ const data = new SlashCommandBuilder()
 			.setRequired(true)
 			.setAutocomplete(false)
 	);
-//		opt.setName('d2s')
-//			.setDescription('download to server')
-//			.setRequired(false)
-//			.setAutocomplete(false)
 
 async function execute(interaction) {
 	const name = interaction.options.getString('name');
@@ -47,34 +42,6 @@ async function execute(interaction) {
 		ephemeral: true,
 	});
 	return;
-	/*
-	if (await redis.redisEmoteNameCheck(name)) {
-		await interaction.editReply({
-			content: `unexpect error, add name: ${name}; url: ${source} failed`,
-			ephemeral: true,
-		});
-		return;
-	}
-	*/
-
-	/*
-	const check = await urlChecker.urlImageCheckExists(source)
-	if (check === [true,true]) {
-		return;
-	}
-	if (check[0] === false) {
-		await interaction.editReply({
-			content: 'warring: url source does not exists',
-			ephemeral: true,
-		});
-	}
-	if (check[1] === false) {
-		await interaction.editReply({
-			content: 'warring: url source not a image',
-			ephemeral: true,
-		});
-	}
-	*/
 }
 
 module.exports = {
