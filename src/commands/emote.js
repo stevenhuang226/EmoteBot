@@ -36,15 +36,6 @@ async function execute(interaction) {
 		});
 		return;
 	}
-	/*
-	if (! filePath.startWith('http') && ! fs.existsSync(filePath)) {
-		await interaction.replay({
-			content: `path: ${filePath} file lose`,
-			ephemeral: true,
-		})
-		return;
-	}
-	*/
 	await interaction.editReply({
 		content: emotePath,
 	});
